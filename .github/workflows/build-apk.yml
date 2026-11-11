@@ -23,7 +23,7 @@ jobs:
           cp index.html manifest.webmanifest sw.js icon-192.png icon-512.png www/ 2>/dev/null || true
           npm init -y
           npm i @capacitor/core @capacitor/cli @capacitor/android @capacitor/local-notifications
-          npx cap init KeuanganKu id.keuanganku.app --web-dir www --yes
+          npx cap init KeuanganKu id.keuanganku.app --web-dir www
           npx cap add android
           npx cap sync android
           cd android && chmod +x gradlew && ./gradlew assembleDebug
