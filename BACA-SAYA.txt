@@ -1,0 +1,16 @@
+KEUANGANKU v3 - CARA MENDAPATKAN APK (GRATIS, TANPA PEMBUAT APK PIHAK KETIGA)
+
+1. Buat repo di github.com (nama: keuanganku), lalu upload SEMUA isi zip ini
+   (termasuk folder .github). File harus langsung di root repo.
+2. Buka tab Actions > "Build APK" > Run workflow. Tunggu sekitar 5-8 menit.
+3. Buka hasil run tersebut > bagian Artifacts > unduh "KeuanganKu-APK" (zip berisi app-debug.apk).
+4. Ekstrak, kirim ke HP, buka file APK, izinkan "Instal dari sumber tidak dikenal".
+5. Buka aplikasi > menu Lainnya > Pengingat dan alarm > Simpan dan jadwalkan > izinkan notifikasi.
+
+Alternatif tanpa APK: pasang di GitHub Pages lalu "Instal aplikasi" dari Chrome (alarm saat
+aplikasi tertutup hanya jalan di versi APK).
+
+iOS: file IPA tidak bisa dibuat tanpa Mac dan akun Apple Developer. Di iPhone gunakan
+Safari > Bagikan > Tambah ke Layar Utama.
+
+Data lama (v2) otomatis dipindahkan saat pertama dibuka di alamat yang sama.
