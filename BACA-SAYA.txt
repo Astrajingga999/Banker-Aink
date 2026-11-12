@@ -1,4 +1,4 @@
-KEUANGANKU v3 - CARA MENDAPATKAN APK (GRATIS, TANPA PEMBUAT APK PIHAK KETIGA)
+KEUANGANKU v6 - CARA MENDAPATKAN APK (GRATIS, TANPA PEMBUAT APK PIHAK KETIGA)
 
 1. Buat repo di github.com (nama: keuanganku), lalu upload SEMUA isi zip ini
    (termasuk folder .github). File harus langsung di root repo.
