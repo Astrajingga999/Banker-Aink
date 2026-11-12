@@ -14,3 +14,17 @@ iOS: file IPA tidak bisa dibuat tanpa Mac dan akun Apple Developer. Di iPhone gu
 Safari > Bagikan > Tambah ke Layar Utama.
 
 Data lama (v2) otomatis dipindahkan saat pertama dibuka di alamat yang sama.
+
+CATATAN v3.1: jika tab Actions tidak menampilkan "Build APK", folder .github belum ikut
+terunggah (folder tersembunyi). Buat manual: di GitHub tekan Add file > Create new file,
+ketik nama  .github/workflows/build-apk.yml  lalu tempel isi file build-apk.yml.txt.
+
+CATATAN v3.4 (PEMBARUAN TANPA KEHILANGAN DATA): unggah juga file debug.keystore ke root repo.
+Dengan kunci tetap ini, APK baru bisa dipasang menimpa APK lama dan data tetap ada.
+Khusus pemasangan pertama versi ini: APK lama (kunci acak) harus dihapus dulu, jadi
+SALIN CADANGAN DATA dulu di Lainnya > Cadangan data. Setelah itu, update berikutnya aman.
+
+CATATAN v3.5 (NOTIFIKASI PEMBARUAN): setiap update, naikkan angka APP_VER di index.html
+(misal "3.5" jadi "3.6"). Build APK otomatis membuat Release di GitHub berisi KeuanganKu.apk.
+Aplikasi mengecek Release terbaru saat dibuka dan ada internet; jika lebih baru, muncul
+banner "Ada pembaruan" dengan tombol Unduh. Repo harus PUBLIK agar pengguna bisa mengunduh.
