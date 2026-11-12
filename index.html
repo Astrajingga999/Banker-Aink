@@ -44,10 +44,10 @@ nav svg{display:block;margin:0 auto 2px;width:21px;height:21px;stroke:currentCol
 @media (prefers-reduced-motion:reduce){#bg,.cb,.o{animation:none}}
 </style></head><body>
 <div id="bg"><div class="o"></div><div class="o"></div></div>
-<main><div class="top"><h1>Manager Your Money</h1><div class="mon"><button class="ib" id="pv" aria-label="Bulan sebelumnya">‹</button><b id="mn"></b><button class="ib" id="nx" aria-label="Bulan berikutnya">›</button></div></div><div id="v"></div></main>
+<main><div class="top"><h1>Manage Your Money</h1><div class="mon"><button class="ib" id="pv" aria-label="Bulan sebelumnya">‹</button><b id="mn"></b><button class="ib" id="nx" aria-label="Bulan berikutnya">›</button></div></div><div id="v"></div></main>
 <nav id="nav"></nav><div id="ts"></div>
 <script>
-var APP_VER="3.9",REPO="Astrajingga999/Banker-Aink",K="keuanganku-v3",S=null;
+var APP_VER="3.10",REPO="Astrajingga999/Banker-Aink",K="keuanganku-v3",S=null;
 try{S=JSON.parse(localStorage.getItem(K))}catch(e){}
 if(!S){S={w:[{id:"w1",n:"Tunai",b:0},{id:"w2",n:"Rekening Bank",b:0},{id:"w3",n:"E-Wallet",b:0}],tx:[],bills:[],bud:{},goals:[],rem:{dOn:true,dt:"20:00",bOn:true,bd:[3,1,0],bt:"08:00",wOn:true,wd:0,wt:"19:00"}};
  try{var o=JSON.parse(localStorage.getItem("keuanganku-v2"));if(o&&o.months){Object.keys(o.months).forEach(function(k){var m=o.months[k];m.inc.forEach(function(x){S.tx.push({id:x.id,t:"in",c:x.type=="gaji"?"Gaji":"Lainnya",n:x.note||"",a:x.amt,d:k+"-01",w:"w2"})});m.exp.forEach(function(x){S.tx.push({id:x.id,t:"out",c:x.cat,n:x.note||"",a:x.amt,d:k+"-01",w:"w2"})})});(o.inst||[]).forEach(function(x){S.bills.push({id:x.id,n:x.name,a:x.amt,day:x.due,paid:{}})})}}catch(e){}}
@@ -154,9 +154,12 @@ document.addEventListener("input",function(e){var t=e.target;if(t.classList.cont
 
 document.addEventListener("change",function(e){var t=e.target;if((t.id=="sc"||t.id=="sg")&&t.files[0]){scan(t.files[0]);t.value=""}});
 function cvs(f,mx,g){return new Promise(function(ok,no){var im=new Image(),u=URL.createObjectURL(f);im.onload=function(){var r=Math.min(1,mx/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=im.width*r;c.height=im.height*r;var x=c.getContext("2d");if(g)x.filter="grayscale(1) contrast(1.5)";x.drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);ok(c)};im.onerror=no;im.src=u})}
-function ocrLib(){if(window.Tesseract)return Promise.resolve();function ld(u){return new Promise(function(ok,no){var e=document.createElement("script");e.src=u;e.onload=ok;e.onerror=no;document.head.appendChild(e)})}
+function TO(p,ms,what){return new Promise(function(ok,no){var t=setTimeout(function(){no(new Error("waktu habis saat "+what))},ms);p.then(function(v){clearTimeout(t);ok(v)},function(e){clearTimeout(t);no(e)})})}
+function LG(m){var s=$("sp");if(s&&m&&m.status)s.textContent="Membaca struk: "+m.status+(m.progress?" "+Math.round(m.progress*100)+"%":"")}
+function ocrLib(){if(window.Tesseract)return Promise.resolve();function ld(u){return new Promise(function(ok,no){var e=document.createElement("script");e.src=u;e.onload=ok;e.onerror=function(){no(new Error("pustaka baca tidak termuat: "+u))};document.head.appendChild(e)})}
  return ld("tess/tesseract.min.js").then(function(){if(!window.Tesseract)throw 0;window.TLOC=1}).catch(function(){return ld("https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js")})}
-async function mkw(){function u(a){return new URL(a,location.href).href}try{if(window.TLOC)return await Tesseract.createWorker("eng",1,{workerPath:u("tess/worker.min.js"),corePath:u("tess/"),langPath:u("tess/")})}catch(e){}return await Tesseract.createWorker("eng")}
+async function mkw(){function u(a){return new URL(a,location.href).href}try{if(window.TLOC)return await Tesseract.createWorker("eng",1,{workerPath:u("tess/worker.min.js"),corePath:u("tess/"),langPath:u("tess/"),workerBlobURL:false,logger:LG})}catch(e){if(!navigator.onLine)throw new Error("mesin baca offline tidak termuat ("+(e&&e.message||e)+")")}
+ if(!navigator.onLine)throw new Error("mesin baca tidak ada di aplikasi dan tidak ada internet");return await Tesseract.createWorker("eng",1,{logger:LG})}
 function crop(c){var w=c.width,h=c.height,p=c.getContext("2d").getImageData(0,0,w,h).data,n=w*h,G=new Uint8Array(n),H=new Array(256).fill(0),i,j,t,s=0,sB=0,wB=0,mx=0,th=128;
  for(i=0,j=0;j<n;i+=4,j++){G[j]=p[i]*.3+p[i+1]*.59+p[i+2]*.11;H[G[j]]++}
  for(t=0;t<256;t++)s+=t*H[t];
@@ -198,15 +201,15 @@ function parse(t){var L=t.split(/\n/).map(function(x){return x.trim()}).filter(B
  r.n="";r.c=null;
  for(k=0;k<SH.length;k++)if(SH[k][1].test(t)){r.n=SH[k][0];r.c=SH[k][2];return r}
  for(k in KAT)if(KAT[k].test(t)){r.c=k;break}return r}
-async function scan(f){var st=$("sp"),r,res,best=null,md,w;cwc="";try{st.textContent="Menyiapkan foto...";var c0=await cvs(f,3000),th=(await cvs(f,560)).toDataURL("image/jpeg",.5);pend=th;var cr=enh(crop(c0));
-  st.textContent="Membaca struk (bisa 10-30 detik)...";await ocrLib();w=await mkw();
-  for(md of["4","6","11"]){await w.setParameters({tessedit_pageseg_mode:md,preserve_interword_spaces:"1"});res=await w.recognize(cr);r=parse(res.data.text);r.conf=res.data.confidence;r.txt=res.data.text;if(!best||(r.a&&!best.a)||(!r.a==!best.a&&r.conf>best.conf))best=r;if(r.a&&!r.est&&r.conf>=45)break}
+async function scan(f){var st=$("sp"),r,res,best=null,md,w;cwc="";try{st.textContent="Menyiapkan foto...";var c0=await cvs(f,1800),th=(await cvs(f,560)).toDataURL("image/jpeg",.5);pend=th;var cr=enh(crop(c0));
+  st.textContent="Memuat pustaka baca...";await TO(ocrLib(),20000,"memuat pustaka baca");st.textContent="Menyiapkan mesin baca...";w=await TO(mkw(),60000,"menyiapkan mesin baca");st.textContent="Membaca struk...";
+  for(md of["6","4"]){await w.setParameters({tessedit_pageseg_mode:md,preserve_interword_spaces:"1"});res=await TO(w.recognize(cr),70000,"membaca teks");r=parse(res.data.text);r.conf=res.data.confidence;r.txt=res.data.text;if(!best||(r.a&&!best.a)||(!r.a==!best.a&&r.conf>best.conf))best=r;if(r.a&&!r.est&&r.conf>=45)break}
   await w.terminate();r=best;var ok=r.conf>=45;if(!ok&&r.a)r.est=1;
   if(r.a)$("f-a").value=fm(r.a);if(r.cash>r.a)$("f-cs").value=fm(r.cash);kbUp();
   if(ok){if(r.n)$("f-n").value=r.n;if(r.d)$("f-d").value=r.d;if(r.c){cc=r.c;tgl("data-ct",cc)}}
   var h=r.a?"Total terbaca <b>"+rp(r.a)+"</b>"+(r.cash?", tunai "+rp(r.cash):"")+(r.chg?", kembalian "+rp(r.chg):"")+(r.warn?". Angka tidak saling cocok, mohon periksa.":r.est?". Ini perkiraan, mohon periksa.":"."):"Struk belum terbaca. Coba foto lebih dekat, struk diratakan, alas polos gelap, cahaya cukup. Atau isi manual.";
   st.innerHTML=h+'<div>Pilih dompet pembayar, uang tunai, dan tujuan kembalian di form bawah.</div><img src="'+th+'" alt="Struk"><details><summary>Teks hasil baca</summary><pre style="white-space:pre-wrap;font-size:11px">'+esc(r.txt)+'</pre></details>'}
- catch(x){st.innerHTML="Gagal membaca otomatis ("+esc(x&&x.message||x)+"). Foto tetap tersimpan, isi nominal manual."+(pend?'<img src="'+pend+'" alt="Struk">':"")}}
+ catch(x){try{w&&w.terminate()}catch(e2){}st.innerHTML="Gagal membaca otomatis ("+esc(x&&x.message||x)+"). Foto tetap tersimpan, isi nominal manual."+(pend?'<img src="'+pend+'" alt="Struk">':"")}}
 async function cam(){var ov=document.createElement("div");ov.style.cssText="position:fixed;inset:0;z-index:9;background:#000;display:flex;flex-direction:column";ov.innerHTML='<video autoplay playsinline muted style="flex:1;min-height:0;width:100%;object-fit:contain"></video><div style="display:flex;gap:10px;padding:14px"><button class="btn g" id="cx" style="margin:0">Batal</button><button class="btn" id="cs" style="margin:0">Ambil foto</button></div>';document.body.appendChild(ov);var v=ov.querySelector("video"),st;
  function off(){if(st)st.getTracks().forEach(function(t){t.stop()});ov.remove()}
  try{st=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"},width:{ideal:1920}},audio:false});v.srcObject=st}catch(e){off();return toast("Kamera tidak diizinkan atau tidak tersedia di aplikasi ini")}
