@@ -19,7 +19,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: '21'
       - name: Build
         run: |
           mkdir www && cp index.html manifest.webmanifest sw.js icon-192.png icon-512.png www/ || true
@@ -39,3 +39,4 @@ jobs:
           tag_name: v1.0.${{ github.run_number }}
           name: mYm v1.0.${{ github.run_number }}
           files: mYm.apk
+          generate_release_notes: true
