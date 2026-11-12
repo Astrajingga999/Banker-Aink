@@ -19,6 +19,11 @@ jobs:
           mkdir www && cp index.html manifest.webmanifest sw.js icon-192.png icon-512.png www/
           npm init -y
           npm i @capacitor/core @capacitor/cli @capacitor/android @capacitor/local-notifications
+          npm i tesseract.js@5.1.1 @tesseract.js-data/eng || true
+          mkdir -p www/tess
+          cp node_modules/tesseract.js/dist/tesseract.min.js node_modules/tesseract.js/dist/worker.min.js www/tess/ || true
+          cp node_modules/tesseract.js-core/tesseract-core* www/tess/ || true
+          cp "$(find node_modules/@tesseract.js-data/eng -name eng.traineddata.gz | head -1)" www/tess/ || true
           npx cap init mYm id.keuanganku.app --web-dir www
           npx cap add android
           sed -i 's#</manifest>#<uses-permission android:name="android.permission.CAMERA"/></manifest>#' android/app/src/main/AndroidManifest.xml
