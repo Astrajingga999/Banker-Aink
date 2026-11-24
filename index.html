@@ -36,12 +36,18 @@ nav svg{display:block;margin:0 auto 2px;width:21px;height:21px;stroke:currentCol
 #bg{position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:-1;pointer-events:none;background:#070B1A}
 button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .card{background:rgba(18,26,56,.55)}nav{background:rgba(10,15,36,.95)}#lk{display:none}
+.rb{width:100%;display:flex;justify-content:space-between;align-items:center;background:none;border:0;border-bottom:1px solid var(--ln);padding:9px 0;text-align:left;cursor:pointer;color:inherit;font:inherit}
+#dtv{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center}
+.sh{width:100%;max-width:520px;max-height:86vh;overflow:auto;background:#0d1430;border:1px solid var(--ln);border-radius:24px 24px 0 0;padding:16px 16px calc(24px + env(safe-area-inset-bottom,0px));animation:up .22s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+.shh{display:flex;justify-content:space-between;align-items:center}
+details{border-bottom:1px solid var(--ln)}details summary{list-style:none;display:flex;justify-content:space-between;align-items:center;padding:10px 0;cursor:pointer}details summary::-webkit-details-marker{display:none}
 </style></head><body>
 
 <main><div class="top"><h1>Manager Your Money</h1><div class="mon"><button class="ib" id="pv" aria-label="Bulan sebelumnya">‹</button><b id="mn"></b><button class="ib" id="nx" aria-label="Bulan berikutnya">›</button></div></div><div id="v"></div></main>
 <div id="lk" style="position:fixed;inset:0;z-index:50;background:#070B1A;place-items:center;padding:24px"><div class="card" style="width:100%;max-width:320px;text-align:center"><h2>Masukkan PIN</h2><input id="pin" type="password" inputmode="numeric" maxlength="4" autocomplete="off" style="text-align:center;font-size:24px;letter-spacing:.5em"><small id="pm" class="neg"></small></div></div><nav id="nav"></nav><div id="ts"></div>
 <script>
-var APP_VER="4.1",REPO="Astrajingga999/Banker-Aink",K="keuanganku-v3",S=null;
+var APP_VER="4.2",REPO="Astrajingga999/Banker-Aink",K="keuanganku-v3",S=null;
 try{S=JSON.parse(localStorage.getItem(K))}catch(e){}
 if(!S){S={w:[{id:"w1",n:"Tunai",b:0},{id:"w2",n:"Rekening Bank",b:0},{id:"w3",n:"E-Wallet",b:0}],tx:[],bills:[],bud:{},goals:[],rem:{dOn:true,dt:"20:00",bOn:true,bd:[3,1,0],bt:"08:00",wOn:true,wd:0,wt:"19:00"}};
  try{var o=JSON.parse(localStorage.getItem("keuanganku-v2"));if(o&&o.months){Object.keys(o.months).forEach(function(k){var m=o.months[k];m.inc.forEach(function(x){S.tx.push({id:x.id,t:"in",c:x.type=="gaji"?"Gaji":"Lainnya",n:x.note||"",a:x.amt,d:k+"-01",w:"w2"})});m.exp.forEach(function(x){S.tx.push({id:x.id,t:"out",c:x.cat,n:x.note||"",a:x.amt,d:k+"-01",w:"w2"})})});(o.inst||[]).forEach(function(x){S.bills.push({id:x.id,n:x.name,a:x.amt,day:x.due,paid:{}})})}}catch(e){}}
@@ -74,7 +80,7 @@ function home(){var k=ym(),I=sm(mt(k,"in")),O=sm(mt(k,"out")),c={},a=0,i;
  mt(k,"out").forEach(function(x){c[x.c]=(c[x.c]||0)+x.a});
  var ks=Object.keys(c).sort(function(p,q){return c[q]-c[p]}),sg=ks.map(function(n,j){var s=a;a+=c[n]/O*360;return PAL[j%9]+" "+s+"deg "+a+"deg"});
  var h='<div class="card"><small>Total saldo (dompet yang dihitung)</small><div class="big">'+rp(tot)+'</div><div class="chips">'+S.w.map(function(w){return'<div class="chip"><small>'+esc(w.n)+(w.t===false?" · tidak dihitung":"")+'</small><b>'+rp(bal(w))+'</b></div>'}).join("")+'</div></div>';
- h+='<div class="card"><h2>Ringkasan '+BLN[mo]+'</h2><div class="row"><span>Pemasukan</span><b class="amt pos">'+rp(I)+'</b></div><div class="row"><span>Pengeluaran</span><b class="amt neg">'+rp(O)+'</b></div><div class="row"><b>Selisih</b><b class="amt '+(I-O<0?"neg":"pos")+'">'+rp(I-O)+'</b></div>';
+ h+='<div class="card"><h2>Ringkasan '+BLN[mo]+'</h2><button class="rb" data-dt="in"><span>Pemasukan <small>›</small></span><b class="amt pos">'+rp(I)+'</b></button><button class="rb" data-dt="out"><span>Pengeluaran <small>›</small></span><b class="amt neg">'+rp(O)+'</b></button><div class="row"><b>Selisih</b><b class="amt '+(I-O<0?"neg":"pos")+'">'+rp(I-O)+'</b></div>';
  if(I>0)h+='<small>Tingkat tabungan: '+Math.round((I-O)/I*100)+'% dari pemasukan</small>';h+='</div>';
  if(O>0)h+='<div class="card"><h2>Pengeluaran per kategori</h2><div class="ring" style="background:conic-gradient('+sg.join(",")+')"><div class="core"><small>Total keluar</small><b>'+rp(O)+'</b></div></div>'+ks.map(function(n,j){return'<div class="row"><span><span style="color:'+PAL[j%9]+'">●</span> '+ic(n)+" "+esc(n)+'</span><span class="amt">'+rp(c[n])+'</span></div>'}).join("")+'</div>';
  var bk=Object.keys(S.bud).filter(function(n){return S.bud[n]>0});
@@ -120,6 +126,12 @@ var _sv=0;function saveNow(){_sv=0;try{localStorage.setItem(K,JSON.stringify(S))
 function saveSoon(){if(!_sv)_sv=setTimeout(saveNow,400)}
 function show(){$("mn").textContent=BLN[mo]+" "+y;$("nav").innerHTML=Object.keys(NM).map(function(k){return'<button data-tab="'+k+'" class="'+(tab==k?"on":"")+'"><svg viewBox="0 0 24 24">'+IC[k]+'</svg>'+NM[k]+'</button>'}).join("");VW[tab]()}
 function draw(){show();saveSoon();schedSoon()}
+function det(t){var k=ym(),L=mt(k,t),c={},tot=sm(L),ks;L.forEach(function(x){(c[x.c]=c[x.c]||[]).push(x)});
+ ks=Object.keys(c).sort(function(p,q){return sm(c[q])-sm(c[p])});
+ var h='<div class="sh"><div class="shh"><b>'+(t=="in"?"Pemasukan ":"Pengeluaran ")+BLN[mo]+' '+y+'</b><button class="x" id="dt-x" aria-label="Tutup">×</button></div><div class="big '+(t=="in"?"pos":"neg")+'">'+rp(tot)+'</div><small>'+L.length+' transaksi · ketuk kategori untuk melihat isinya</small>';
+ h+=ks.length?ks.map(function(n){var a=sm(c[n]);return'<details><summary><span>'+ic(n)+" "+esc(n)+' <small>'+Math.round(a/tot*100)+'% · '+c[n].length+'x</small></span><b class="amt">'+rp(a)+'</b></summary><div class="bar"><i style="width:'+a/tot*100+'%"></i></div>'+c[n].sort(function(p,q){return p.d<q.d?1:p.d>q.d?-1:q.a-p.a}).map(function(x){var w=S.w.filter(function(z){return z.id==x.w})[0];return'<div class="row"><div class="t"><span>'+esc(x.n||n)+'</span><small>'+x.d.slice(8)+' '+BLN[+x.d.slice(5,7)-1].slice(0,3)+' · '+esc(w?w.n:"-")+'</small></div><span class="amt">'+rp(x.a)+'</span><button class="x" data-e="'+x.id+'" aria-label="Ubah">✏️</button></div>'}).join("")+'</details>'}).join(""):'<div class="mu" style="padding:16px;text-align:center">Belum ada catatan bulan ini.</div>';
+ h+='</div>';var o=document.createElement("div");o.id="dtv";o.innerHTML=h;o.onclick=function(e){if(e.target===o)o.remove()};document.body.appendChild(o)}
+function dtClose(){var o=$("dtv");if(o)o.remove()}
 function lock(){if(S.pin){$("lk").style.display="grid";$("pin").value="";$("pm").textContent=""}}
 document.addEventListener("visibilitychange",function(){if(document.hidden){clearTimeout(_sv);saveNow();lock()}});addEventListener("pagehide",saveNow);
 function csv(){return"tanggal,jenis,kategori,dompet,catatan,nominal\n"+S.tx.slice().sort(function(a,b){return a.d<b.d?-1:1}).map(function(x){var w=S.w.filter(function(z){return z.id==x.w})[0];return[x.d,x.t=="in"?"masuk":"keluar",x.c,w?w.n:"",'"'+String(x.n||"").replace(/"/g,"'")+'"',x.a].join(",")}).join("\n")}
@@ -146,7 +158,9 @@ document.addEventListener("click",function(e){var b=e.target.closest("button");i
  else if(b.id=="r-go")saveRem();
  else if(b.id=="r-test")testN();
  else if(b.id=="ics")ics();
- else if(D.e){ed=S.tx.filter(function(x){return x.id==D.e})[0];tm=ed.t;tab="trx";show();scrollTo(0,0)}
+ else if(D.dt)det(D.dt)
+ else if(b.id=="dt-x")dtClose()
+ else if(D.e){dtClose();ed=S.tx.filter(function(x){return x.id==D.e})[0];tm=ed.t;tab="trx";show();scrollTo(0,0)}
  else if(b.id=="ed-x"){ed=null;show()}
  else if(b.id=="tl-more"){LIM+=100;tl()}
  else if(b.id=="tr-go"){var fa=$("t-f").value,tw=$("t-t").value,am=num("t-a");if(!am||fa==tw)return toast("Pilih dua dompet berbeda dan isi nominal");var gg=uid(),d2=ds(now),tn=S.w.filter(function(w){return w.id==tw})[0].n,fn=S.w.filter(function(w){return w.id==fa})[0].n;S.tx.push({id:uid(),t:"out",c:"Transfer",tf:1,n:"Pindah ke "+tn,a:am,d:d2,w:fa,g:gg},{id:uid(),t:"in",c:"Transfer",tf:1,n:"Pindah dari "+fn,a:am,d:d2,w:tw,g:gg});toast("Saldo dipindahkan");draw()}
@@ -191,21 +205,32 @@ function chkUpd(){if(!navigator.onLine||!window.fetch)return;var c=new AbortCont
   b.innerHTML='<span>Ada pembaruan '+esc(j.tag_name)+'</span><a href="'+esc(j.html_url)+'" target="_blank" rel="noopener" style="color:var(--a);font-weight:700">Unduh</a><button class="x" aria-label="Tutup">×</button>';b.querySelector("button").onclick=function(){b.remove()};document.body.appendChild(b)}).catch(function(){})}
 setTimeout(chkUpd,3000);
 var fxApply;(function(){
-var c=document.createElement("canvas"),x=c.getContext("2d"),W,H,V=[],E=[],i,j,run=false,last=0,fps=30,sc=.6,t0=performance.now(),ac=0,an=0,RM=matchMedia("(prefers-reduced-motion:reduce)").matches;
+var c=document.createElement("canvas"),x=c.getContext("2d"),W,H,V=[],E=[],F=[],i,j,k2,run=false,last=0,fps=30,sc=.7,t0=performance.now(),ac=0,an=0,RM=matchMedia("(prefers-reduced-motion:reduce)").matches;
 c.id="bg";c.setAttribute("aria-hidden","true");document.body.insertBefore(c,document.body.firstChild);
 for(i=0;i<16;i++)V.push([i&1?1:-1,i&2?1:-1,i&4?1:-1,i&8?1:-1]);
 for(i=0;i<16;i++)for(j=0;j<4;j++)if(!(i&(1<<j)))E.push([i,i|(1<<j)]);
-var T=[[.5,.4,.34,1],[.14,.82,.15,-1.5],[.9,.14,.11,1.8]];
+for(j=0;j<4;j++)for(k2=j+1;k2<4;k2++)for(i=0;i<16;i++)if(!(i&(1<<j))&&!(i&(1<<k2)))F.push([i,i|(1<<j),i|(1<<j)|(1<<k2),i|(1<<k2)]);
+var T=[[.5,.42,.37,1],[.13,.84,.16,-1.5],[.9,.13,.12,1.8]];
 function size(){W=c.width=Math.max(120,Math.round(innerWidth*sc));H=c.height=Math.max(160,Math.round(innerHeight*sc))}
-function glow(px,py,h,a){var g=x.createRadialGradient(px,py,0,px,py,Math.max(W,H)*.75);g.addColorStop(0,"hsla("+h+",90%,58%,"+a+")");g.addColorStop(1,"hsla("+h+",90%,58%,0)");x.fillStyle=g;x.fillRect(0,0,W,H)}
-function frame(t){var a0=performance.now(),h=(t*22)%360;
- x.fillStyle="#070B1A";x.fillRect(0,0,W,H);glow(W*.9,0,h,.3);glow(0,H*.45,(h+120)%360,.2);glow(W*.6,H,(h+240)%360,.2);
- x.lineWidth=Math.max(1,W/330);x.lineCap="round";
- T.forEach(function(q,n){var s=q[3],A=t*.33*s,B=t*.21*s,C=t*.15*s,ca=Math.cos(A),sa=Math.sin(A),cb=Math.cos(B),sb=Math.sin(B),cc=Math.cos(C),sn=Math.sin(C),r=Math.min(W,H)*q[2],cx=W*q[0],cy=H*q[1],P=[];
-  V.forEach(function(v){var x1=v[0]*ca-v[3]*sa,w1=v[0]*sa+v[3]*ca,z1=v[2]*cb-w1*sb,w2=v[2]*sb+w1*cb,x2=x1*cc-v[1]*sn,y2=x1*sn+v[1]*cc,k=1/(3.2-w2),d=1/(3.4-z1*k);P.push([cx+x2*k*d*r*2.2,cy+y2*k*d*r*2.2,w2])});
-  E.forEach(function(e){var p=P[e[0]],q2=P[e[1]],w=(p[2]+q2[2])/2;x.strokeStyle="hsla("+Math.round((h+n*70+w*35+360)%360)+",95%,"+Math.round(60+w*8)+"%,"+(.72+w*.2).toFixed(2)+")";x.beginPath();x.moveTo(p[0],p[1]);x.lineTo(q2[0],q2[1]);x.stroke()})});
- return performance.now()-a0}
-function loop(now){if(!run)return;requestAnimationFrame(loop);if(now-last<1000/fps)return;last=now;ac+=frame((now-t0)/1000);an++;if(an==40){if(ac/an>9&&sc>.45){sc=.45;fps=20;size()}ac=0;an=0}}
+function glow(px,py,h,a,rad){var g=x.createRadialGradient(px,py,0,px,py,rad);g.addColorStop(0,"hsla("+Math.round(h)+",95%,55%,"+a+")");g.addColorStop(1,"hsla("+Math.round(h)+",95%,55%,0)");x.fillStyle=g;x.fillRect(0,0,W,H)}
+function frame(t){var a0=performance.now(),h=(t*18)%360,m=Math.max(W,H),ang=t*.12,gx=Math.cos(ang)*W*.7,gy=Math.sin(ang)*H*.7,g=x.createLinearGradient(W/2-gx,H/2-gy,W/2+gx,H/2+gy);
+ g.addColorStop(0,"hsl("+Math.round(h)+",80%,9%)");g.addColorStop(.4,"hsl("+Math.round((h+70)%360)+",85%,16%)");g.addColorStop(.75,"hsl("+Math.round((h+150)%360)+",80%,11%)");g.addColorStop(1,"hsl("+Math.round((h+230)%360)+",85%,15%)");
+ x.globalCompositeOperation="source-over";x.fillStyle=g;x.fillRect(0,0,W,H);
+ x.globalCompositeOperation="lighter";
+ glow(W*(.5+.45*Math.cos(t*.21)),H*(.35+.3*Math.sin(t*.17)),(h+30)%360,.28,m*.7);glow(W*(.5+.45*Math.sin(t*.15+2)),H*(.65+.3*Math.cos(t*.19)),(h+190)%360,.24,m*.7);
+ var lw=Math.max(1,W/300);x.lineCap="round";x.lineJoin="round";
+ T.forEach(function(q,n){var s=q[3],A=t*.33*s,B=t*.21*s,C=t*.15*s,ca=Math.cos(A),sa=Math.sin(A),cb=Math.cos(B),sb=Math.sin(B),cc=Math.cos(C),sn=Math.sin(C),r=Math.min(W,H)*q[2],cx=W*(q[0]+.03*Math.sin(t*.2+n*2)),cy=H*(q[1]+.03*Math.cos(t*.17+n*3)),P=[],hh=(h+n*80)%360;
+  V.forEach(function(v){var x1=v[0]*ca-v[3]*sa,w1=v[0]*sa+v[3]*ca,z1=v[2]*cb-w1*sb,w2=v[2]*sb+w1*cb,x2=x1*cc-v[1]*sn,y2=x1*sn+v[1]*cc,k=1/(3.2-w2),d=1/(3.4-z1*k);P.push([cx+x2*k*d*r*2.2,cy+y2*k*d*r*2.2,w2,d])});
+  x.fillStyle="hsla("+Math.round(hh)+",90%,60%,.045)";
+  F.forEach(function(f){x.beginPath();x.moveTo(P[f[0]][0],P[f[0]][1]);x.lineTo(P[f[1]][0],P[f[1]][1]);x.lineTo(P[f[2]][0],P[f[2]][1]);x.lineTo(P[f[3]][0],P[f[3]][1]);x.closePath();x.fill()});
+  E.forEach(function(e){var p=P[e[0]],o=P[e[1]],w=(p[2]+o[2])/2,dd=(p[3]+o[3])/2,wd=lw*(.5+(dd-.2)*3.6),col=Math.round((hh+w*35+360)%360);
+   x.beginPath();x.moveTo(p[0],p[1]);x.lineTo(o[0],o[1]);
+   x.strokeStyle="hsla("+col+",95%,60%,.13)";x.lineWidth=wd*4;x.stroke();
+   x.strokeStyle="hsla("+col+",100%,"+Math.round(66+w*8)+"%,"+(.55+w*.15).toFixed(2)+")";x.lineWidth=wd;x.stroke()});
+  x.fillStyle="hsla("+Math.round(hh)+",100%,88%,.9)";
+  P.forEach(function(p){x.beginPath();x.arc(p[0],p[1],lw*(.9+(p[3]-.2)*3),0,6.2832);x.fill()})});
+ x.globalCompositeOperation="source-over";return performance.now()-a0}
+function loop(now){if(!run)return;requestAnimationFrame(loop);if(now-last<1000/fps)return;last=now;ac+=frame((now-t0)/1000);an++;if(an==40){if(ac/an>10&&sc>.45){sc=.5;fps=20;size()}ac=0;an=0}}
 fxApply=function(){var on=S.fx!==false&&!RM&&!document.hidden;if(on&&!run){run=true;requestAnimationFrame(loop)}else if(!on){run=false;frame((performance.now()-t0)/1000)}};
 addEventListener("resize",function(){size();if(!run)frame((performance.now()-t0)/1000)});
 document.addEventListener("visibilitychange",fxApply);
